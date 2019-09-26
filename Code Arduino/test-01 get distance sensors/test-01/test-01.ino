@@ -26,5 +26,5 @@ void loop() {
   Serial.write((left/10)%10+'0');
   Serial.write((left/1)%10+'0');
   
-  delay(10);
+//  delay(10);
 }

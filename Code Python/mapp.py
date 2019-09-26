@@ -7,11 +7,18 @@ pygame.display.set_caption('IRA')
 
 ser = serial.Serial('/dev/ttyUSB0', baudrate=9600, bytesize=8, parity='N', stopbits=1, timeout = 1)
 #########################################################################################
+x_robot = 400
+y_robot = 300
+direction = 's'
+done = False
 
+#########################################################################################
 class distance:
     right = -1
     left = -1
 def read_distance():
+    ser.flushInput()
+    ser.flushOutput()
     if(ser.read() == 'R'):
         distance.right = (ord(ser.read()) - 48) * 100
         distance.right += (ord(ser.read()) - 48) * 10
@@ -37,38 +44,61 @@ def move(dir):
     elif(dir == -4): ser.write(b'M-255-255+255+255') #back
     elif(dir == -5): ser.write(b'M-255-255+150+150')
     elif(dir == -6): ser.write(b'M-255-255+100+100')
+
     elif(dir == -7): ser.write(b'M-255-255+000+000')
 
+def draw_wall(x , y):
+    pygame.draw.circle(display, (100,100,255), (x , y), 5)
+    pygame.draw.circle(display, (0,0,255), (x , y), 2)
 
 
 
 #########################################################################################
 
-
-direction = 's'
-done = False
 while not done:
     read_distance()
+    last_x = x_robot
+    last_y = y_robot
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_UP]:
+        ser.write(b'M+255+255-255-255 ')
+        time.sleep(0.1)
+        ser.write(b'M+000+000-000-000 ')
+        y_robot -= 1
+    elif keys[pygame.K_DOWN]:
+        ser.write(b'M-255-255+255+255 ')
+        time.sleep(0.1)
+        ser.write(b'M+000+000-000-000 ')
+        y_robot += 1
+    elif keys[pygame.K_RIGHT]:
+        ser.write(b'M+255-255-255+255 ')
+        time.sleep(0.1)
+        ser.write(b'M+000+000-000-000 ')
+        x_robot += 1
+    elif keys[pygame.K_LEFT]:
+        ser.write(b'M-255+255+255-255 ')
+        time.sleep(0.1)
+        ser.write(b'M+000+000-000-000 ')
+        x_robot -= 1
+    for i in range(distance.right-7):
+        pygame.draw.circle(display, (0,0,0), (x_robot + i , y_robot), 7)
+    for i in range(distance.left-7):
+        pygame.draw.circle(display, (0,0,0), (x_robot - i , y_robot), 7)
+    draw_wall(x_robot + distance.right, y_robot)
+    draw_wall(x_robot - distance.left, y_robot)
+    pygame.draw.circle(display, (0, 0, 0), (last_x, last_y), 5)
+    pygame.draw.circle(display, (0, 255, 0), (x_robot, y_robot), 5)
 
-    
 
     # print(distance.right, distance.left)
-    time.sleep(0.001)
+    # time.sleep(0.001)
     pygame.display.update()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
             pygame.quit()
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                ser.write(b'M-255+255+255-255')
-            elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                ser.write(b'M+255-255-255+255')
-            elif event.key == pygame.K_UP or event.key == pygame.K_w:
-                ser.write(b'M+255+255-255-255')
-            elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                ser.write(b'M-255-255+255+255')
-            elif event.key == pygame.K_1:
+            if event.key == pygame.K_1:
                 move(1)
             elif event.key == pygame.K_2:
                 move(2)
