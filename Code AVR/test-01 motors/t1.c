@@ -25,6 +25,24 @@ Data Stack size         : 256
 #include <delay.h>
 
 
+// Voltage Reference: AVCC pin
+#define ADC_VREF_TYPE ((0<<REFS1) | (1<<REFS0) | (0<<ADLAR))
+
+// Read the AD conversion result
+unsigned int read_adc(unsigned char adc_input)
+{
+ADMUX=adc_input | ADC_VREF_TYPE;
+// Delay needed for the stabilization of the ADC input voltage
+delay_us(10);
+// Start the AD conversion
+ADCSRA|=(1<<ADSC);
+// Wait for the AD conversion to complete
+while ((ADCSRA & (1<<ADIF))==0);
+ADCSRA|=(1<<ADIF);
+return ADCW;
+}
+
+
 // Declare your global variables here
 
 #define DATA_REGISTER_EMPTY (1<<UDRE)
@@ -102,7 +120,7 @@ return data;
 /////////////////////////////// Variables
 int ml1,ml2,mr2,mr1,sign;
 int n1,n2,n3;
-
+int d, i=0;
 
 
 void motor(int L1, int L2, int R2,int R1 )
@@ -183,7 +201,7 @@ PORTA=(0<<PORTA7) | (0<<PORTA6) | (0<<PORTA5) | (0<<PORTA4) | (0<<PORTA3) | (0<<
 
 // Port B initialization
 // Function: Bit7=Out Bit6=Out Bit5=Out Bit4=Out Bit3=Out Bit2=Out Bit1=Out Bit0=Out 
-DDRB=(1<<DDB7) | (1<<DDB6) | (1<<DDB5) | (1<<DDB4) | (1<<DDB3) | (1<<DDB2) | (1<<DDB1) | (1<<DDB0);
+DDRB=(1<<DDB7) | (1<<DDB6) | (1<<DDB5) | (1<<DDB4) | (1<<DDB3) | (0<<DDB2) | (0<<DDB1) | (0<<DDB0);
 // State: Bit7=0 Bit6=0 Bit5=0 Bit4=0 Bit3=0 Bit2=0 Bit1=0 Bit0=0 
 PORTB=(0<<PORTB7) | (0<<PORTB6) | (0<<PORTB5) | (0<<PORTB4) | (0<<PORTB3) | (0<<PORTB2) | (0<<PORTB1) | (0<<PORTB0);
 
@@ -282,8 +300,12 @@ ACSR=(1<<ACD) | (0<<ACBG) | (0<<ACO) | (0<<ACI) | (0<<ACIE) | (0<<ACIC) | (0<<AC
 SFIOR=(0<<ACME);
 
 // ADC initialization
-// ADC disabled
-ADCSRA=(0<<ADEN) | (0<<ADSC) | (0<<ADATE) | (0<<ADIF) | (0<<ADIE) | (0<<ADPS2) | (0<<ADPS1) | (0<<ADPS0);
+// ADC Clock frequency: 125.000 kHz
+// ADC Voltage Reference: AVCC pin
+// ADC Auto Trigger Source: ADC Stopped
+ADMUX=ADC_VREF_TYPE;
+ADCSRA=(1<<ADEN) | (0<<ADSC) | (0<<ADATE) | (0<<ADIF) | (0<<ADIE) | (1<<ADPS2) | (1<<ADPS1) | (0<<ADPS0);
+SFIOR=(0<<ADTS2) | (0<<ADTS1) | (0<<ADTS0);
 
 // SPI initialization
 // SPI disabled
@@ -299,7 +321,8 @@ TWCR=(0<<TWEA) | (0<<TWSTA) | (0<<TWSTO) | (0<<TWEN) | (0<<TWIE);
 motor(0 , 0, 0, 0);
 
 while (1)
-    {   
+    { 
+    
     a = getchar();
     if(a == 'M')
         {
@@ -327,11 +350,29 @@ while (1)
         mr1 += (getchar()-'0');   
         if(sign == '-') mr1 *= -1;
         
+        d = (getchar()-'0') * 100;
+        d += (getchar()-'0') * 10;
+        d += (getchar()-'0');   
+        
         motor(ml1 , ml2, mr2, mr1);
+        for(i = 0; i < d; i++)
+            {
+            if(read_adc(4) > 500)
+                {
+                while(read_adc(4) > 500);
+                while(read_adc(4) < 500);
+                }
+            else
+                {
+                while(read_adc(4) < 500);
+                while(read_adc(4) > 500);
+                }
+            }
+        motor(0,0,0,0); 
         }
     else if(a == 'A');
     else if(a == 'B');
-    else if(a == 'C');
+    else if(a == 'C');  
     
     }
 }

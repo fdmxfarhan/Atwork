@@ -2,7 +2,11 @@ RAM Allocation [bytes]
 Variable                                                                          Address   Size
 ------------------------------------------------------------------------------------------------
 rx_buffer                                                                         0x0160       8
-d                                                                                 0x0168       2
+mr1                                                                               0x0168       2
+sign                                                                              0x016A       2
+d                                                                                 0x016C       2
+i                                                                                 0x016E       2
+a                                                                                 0x0170       2
 
 EEPROM Allocation [bytes]
 Variable                                                                          Address   Size
@@ -22,8 +26,8 @@ mr2                                                                             
 FLASH Allocation [words]
 Function                                                                          Address   Size
 ------------------------------------------------------------------------------------------------
-read_adc                                                                          0x0006A     15
-usart_rx_isr                                                                      0x00079     35
-motor                                                                             0x0009C    140
-main                                                                              0x00128    109
-putchar                                                                           0x00195      7
+usart_rx_isr                                                                      0x0006A     35
+getchar                                                                           0x0008D     19
+read_adc                                                                          0x000A0     15
+motor                                                                             0x000AF    140
+main                                                                              0x0013B    258
