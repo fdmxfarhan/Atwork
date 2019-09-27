@@ -10,3 +10,8 @@
 - Mahshad Akbarsharifi
 - Sara Matinfard
 - Sheyda Tarani
+
+to start this project use the command bellow to clone the files and codes.
+```
+git clone https://github.com/fdmxfarhan/IRA_atwork.git
+```
