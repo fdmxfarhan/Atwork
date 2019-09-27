@@ -16,6 +16,7 @@ void setup() {
 void loop() {
   int right = srf(2);
   int left = srf(3);
+  int front = srf(4);
   
   Serial.write("R");
   Serial.write((right/100)%10+'0');
@@ -25,6 +26,10 @@ void loop() {
   Serial.write((left/100)%10+'0');
   Serial.write((left/10)%10+'0');
   Serial.write((left/1)%10+'0');
+  Serial.write("F");
+  Serial.write((front/100)%10+'0');
+  Serial.write((front/10)%10+'0');
+  Serial.write((front/1)%10+'0');
   
 //  delay(10);
 }
