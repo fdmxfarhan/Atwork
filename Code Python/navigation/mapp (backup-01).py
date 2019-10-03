@@ -65,13 +65,13 @@ def draw_wall(x , y):
 
 #########################################################################################
 
-last_x = x_robot
-last_y = y_robot
 
 
 var = 0
 while not done:
     read_distance()
+    last_x = x_robot
+    last_y = y_robot
     keys = pygame.key.get_pressed()
     if keys[pygame.K_w]:
         ser.write(b'M+255+255-255-255010 ')
@@ -84,10 +84,21 @@ while not done:
     elif keys[pygame.K_SPACE]:
         ser.write(b'M+000+000-000-000000S')
 
-    pygame.draw.circle(display, (255, 255, 255), (last_x, last_y), 20)
-    pygame.draw.circle(display, (0, 255, 0), (x_robot, y_robot), 20)
-    last_x = x_robot
-    last_y = y_robot
+
+    for i in range(distance.right-10):
+        pygame.draw.rect(display, (0,0,0), (x_robot + i , y_robot, 10, 15))
+    for i in range(distance.left-10):
+        pygame.draw.rect(display, (0,0,0), (x_robot - i , y_robot, 10, 15))
+    for i in range(distance.front-10):
+        pygame.draw.rect(display, (0,0,0), (x_robot , y_robot - i, 10, 15))
+
+    draw_wall(x_robot + distance.right, y_robot)
+    draw_wall(x_robot - distance.left, y_robot)
+    draw_wall(x_robot, y_robot - distance.front)
+
+    pygame.draw.circle(display, (0, 0, 0), (last_x, last_y), 5)
+    pygame.draw.circle(display, (0, 255, 0), (x_robot, y_robot), 5)
+
     time.sleep(0.01)
     # print(distance.right, distance.left, distance.front)
     pygame.display.update()
@@ -103,22 +114,4 @@ while not done:
                 while ser.read() != 'A':
                     pass
                 time.sleep(0.01)
-                y_robot -= 10
-            if event.key == pygame.K_DOWN:
-                ser.write(b'M-255-255+255+255010S')
-                while ser.read() != 'A':
-                    pass
-                time.sleep(0.01)
-                y_robot += 10
-            if event.key == pygame.K_LEFT:
-                ser.write(b'M-255+255+255-255010S')
-                while ser.read() != 'A':
-                    pass
-                time.sleep(0.01)
-                x_robot -= 10
-            if event.key == pygame.K_RIGHT:
-                ser.write(b'M+255-255-255+255010S')
-                while ser.read() != 'A':
-                    pass
-                time.sleep(0.01)
-                x_robot += 10
+                y_robot -= 3
