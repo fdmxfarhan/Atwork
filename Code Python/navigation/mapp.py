@@ -68,7 +68,6 @@ def draw_wall(x , y):
 last_x = x_robot
 last_y = y_robot
 
-
 var = 0
 while not done:
     read_distance()
