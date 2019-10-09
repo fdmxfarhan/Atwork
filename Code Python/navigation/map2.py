@@ -14,7 +14,7 @@ except Exception as e:
     try:
         ser = serial.Serial('/dev/ttyUSB1', baudrate=9600, bytesize=8, parity='N', stopbits=1, timeout = 1)
     except:
-        print("Roboto is not connected !!!")
+        print("Roboto is not connected")
 
 #########    variebles
 
@@ -69,6 +69,7 @@ def draw_wall(x , y):
 def clear_wall(x , y):
     pygame.draw.rect(display, (0,0,0), (x*10 , y*10, 10, 10))
 def draw_robot(x,y):
+    global cmp, last_x, last_y, x_robot, y_robot
     pygame.draw.rect(display, (0, 0, 0), (last_x*10-10, last_y*10-10, 30, 30))
     pygame.draw.rect(display, (0, 255, 0), (x*10-10, y*10-10, 30, 30))
 def draw_desks():
@@ -85,6 +86,7 @@ def set_cmp():
         c = (ord(ser.read()) - 48) * 100
         c += (ord(ser.read()) - 48) * 10
         c += (ord(ser.read()) - 48) * 1
+        print("Compass is set.")
     except:
         pass
 def motor(l1,l2,r2,r1, d, next):
@@ -175,10 +177,76 @@ def motor(l1,l2,r2,r1, d, next):
     cnt = 0
     while ser.read() != 'A':
         cnt += 1
-        if cnt > 100:
+        if cnt > 500:
             break
+    # time.sleep(0.01)
+def goto(d):
+    global cmp, last_x, last_y, x_robot, y_robot
+    flag = 0
+    while(flag != 4):
+        global cmp, last_x, last_y, x_robot, y_robot
+        # for i in range(distance.right//10 - 1):
+        #     clear_wall(x_robot + i , y_robot)
+        # for i in range(distance.left//10 - 1):
+        #     clear_wall(x_robot - i , y_robot)
+        # for i in range(distance.front//10 - 1):
+        #     clear_wall(x_robot , y_robot - i)
+        # draw_wall(x_robot + distance.right//10, y_robot)
+        # draw_wall(x_robot - distance.left//10, y_robot)
+        # draw_wall(x_robot, y_robot - distance.front//10)
+        read_sensors()
+        # draw_lines()
+        # draw_desks()
+        # draw_robot(x_robot, y_robot)
+        last_x = x_robot
+        last_y = y_robot
+        delta_x = x_robot - desk_x[d]
+        delta_y = y_robot - desk_y[d]
+        if(flag == 0):
+            if(delta_y == 0):
+                if(delta_x == 0):
+                    motor(1,1,1,1,1,'S')
+                    flag = 4
+                else:
+                    flag = 1
+            elif(delta_y > 0):
+                if(distance.front < 50):
+                    flag = 1
+                else:
+                    motor(200,200,-200,-200,10,' ')
+                    y_robot -= 1
+            elif(delta_y < 0):
+                motor(-200,-200,200,200,10,' ')
+                y_robot += 1
+        elif(flag == 1):
+            if(delta_x == 0):
+                if(delta_y == 0):
+                    motor(1,1,1,1,1,'S')
+                    flag = 4
+                else:
+                    flag = 0
+            elif(delta_x < 0):
+                if(distance.right < 50):
+                    flag = 0
+                else:
+                    motor(200,-200,-200,200,10,' ')
+                    x_robot += 1
+            elif(delta_x > 0):
+                if(distance.left < 50):
+                    flag = 0
+                else:
+                    motor(-200,200,200,-200,10,' ')
+                    x_robot -= 1
+        # pygame.display.flip()
+        # for event in pygame.event.get():
+        #     if event.type == pygame.QUIT:
+        #         done = True
+        #         pygame.quit()
+    # time.sleep(0.1)
+    # motor(1,1,1,1,1,'S')
 
 set_cmp()
+goto(0)
 while not done:
     try:
         read_sensors()
@@ -199,7 +267,6 @@ while not done:
     draw_lines()
     draw_desks()
     draw_robot(x_robot, y_robot)
-
     # print distance.left, distance.front, distance.right, cmp
     last_x = x_robot
     last_y = y_robot
