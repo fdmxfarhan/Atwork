@@ -1,4 +1,3 @@
-
 f = open('desks.txt', "rw+")
 map = f.read()
 desk_x = []
