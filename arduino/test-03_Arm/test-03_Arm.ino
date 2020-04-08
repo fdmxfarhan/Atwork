@@ -20,7 +20,7 @@ WiFiClient client;
 char rec;
 int b[8];
 int c=0;
-int gy;
+int16_t gy;
 int speed = 50;
 int st = 0, last_st = st;
 
@@ -39,7 +39,7 @@ void setup() {
   delay(1000);
   Serial.write(0XA5);
   Serial.write(0X51);
-  
+//  resetStep();
   WiFi.mode(WIFI_STA);
   WiFiMulti.addAP(ssid, password);
 
@@ -60,7 +60,14 @@ void loop() {
   digitalWrite(2,0);
   if(client.available()){
     rec = client.read();
-    if(rec == 'R'){
+    if(rec == 'S'){
+      Serial.write(0XA5);
+      Serial.write(0X55);
+    }
+    else if(rec == 'E'){
+      resetStep();
+    }
+    else if(rec == 'R'){
       st ++;
       st %= 4;
     }
@@ -70,7 +77,7 @@ void loop() {
       st %= 4;
     }
     else if(rec == 'G'){
-      if(Serial.available() > 0){
+      for(int i = 0; i<10; i++){
         Serial.write(0XA5);
         Serial.write(0X51);
         while (true) {
@@ -132,4 +139,18 @@ void step(int s){
     digitalWrite(5, 0);
     delay(speed);
   }
+}
+
+void resetStep(){
+  int a = analogRead(A0);
+  while(a < 100){
+    a = analogRead(A0);
+    st ++;
+    st %= 4;
+    step(st);
+  }
+  pinMode(12, INPUT);
+  pinMode(13, INPUT);
+  pinMode(14, INPUT);
+  pinMode(5, INPUT);  
 }

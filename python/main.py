@@ -55,12 +55,13 @@ def showDesks():
     for i in range(len(desk)):
         desk[i].show(display)
 
-robot.speed = 100
+robot.speed = 80
 v = 0
 d = 'S'
+arm.set()
 while not crashed:
     v2 = 120
-    v = 120
+    v = 100
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             crashed = True
@@ -83,13 +84,15 @@ while not crashed:
             if event.key == pygame.K_e:
                 robot.motor(v2,v2,v2,v2)
             if event.key == pygame.K_d:
-                robot.motor(200,200,-50,-50)
+                arm.rotate(10)
             if event.key == pygame.K_a:
-                robot.motor(50,50,-200,-200)
+                arm.rotate(-10)
             if event.key == pygame.K_r:
                 run()
+            if event.key == pygame.K_s:
+                arm.set()
             if event.key == pygame.K_SPACE:
-                pass
+                robot.motor(33, 100, 33, -33)
             if event.key == pygame.K_0:
                 robot.goto(desk[0],arm)
             if event.key == pygame.K_1:
@@ -102,29 +105,15 @@ while not crashed:
 
         if event.type == pygame.KEYUP:
             key_pressed = False
-            robot.stop(arm)
-            robot.stop(arm)
+            robot.stop2()
             robot.update()
-            v = 0
-            d = 'S'
+            robot.printDistances()
+            arm.update()
+            arm.printAll()
     display.fill(background_color)
     showDesks()
     robot.show()
-    # if(key_pressed and v < 120):
-    #     v += 3
-    #     if(d == 'F'):
-    #         robot.motor(v,v,-v,-v)
-    #     if(d == 'B'):
-    #         robot.motor(-v,-v,v,v)
-    #     if(d == 'R'):
-    #         robot.motor(v,-v,-v,v)
-    #     if(d == 'L'):
-    #         robot.motor(-v,v,v,-v)
 
-    # if(not key_pressed):
-    #     arm.update()
-    #     robot.update()
-    #     robot.printDistances()
     pygame.display.update()
     clock.tick(100)
 print('Good Bye.!!')

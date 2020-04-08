@@ -7,14 +7,14 @@ class Robot():
         try:
             client, address = s.accept()
             if(address[0] == '192.168.43.114'):
-                print('Robot' + address[0] + ' Connected.')
+                print('Robot ' + address[0] + ' Connected.')
                 self.available = True
                 self.client = client
             else:
                 client.close()
                 client, address = s.accept()
                 if(address[0] == '192.168.43.114'):
-                    print('Robot' + address[0] + ' Connected.')
+                    print('Robot ' + address[0] + ' Connected.')
                     self.available = True
                     self.client = client
                 else:
@@ -22,7 +22,7 @@ class Robot():
                     self.available = False
                     self.client = 0
         except:
-            print('Cannot connect to Robot.!!')
+            print('[ error ] Cannot connect to Robot.!!')
             self.available = False
             self.client = 0
         self.x = x
@@ -60,19 +60,26 @@ class Robot():
     def update(self):
         if(not self.available):
             return
-        self.client.send(b'F')
-        self.front = int(self.client.recv(10))
-        time.sleep(0.01)
-        self.client.send(b'B')
-        self.back = int(self.client.recv(10))
-        time.sleep(0.01)
-        self.client.send(b'L')
-        self.left = int(self.client.recv(10))
-        time.sleep(0.01)
-        self.client.send(b'R')
-        self.right = int(self.client.recv(10))
+        try:
+            self.client.send(b'F')
+            time.sleep(0.01)
+            self.front = int(self.client.recv(10))
+            time.sleep(0.01)
+            self.client.send(b'B')
+            time.sleep(0.01)
+            self.back = int(self.client.recv(10))
+            time.sleep(0.01)
+            self.client.send(b'L')
+            time.sleep(0.01)
+            self.left = int(self.client.recv(10))
+            time.sleep(0.01)
+            self.client.send(b'R')
+            time.sleep(0.01)
+            self.right = int(self.client.recv(10))
+        except:
+            pass
     def printDistances(self):
-        print(str(self.front) + '\t' + str(self.right) + '\t' + str(self.back) + '\t' + str(self.left) + '\t')
+        print('[ Distance ] ' + str(self.front) + ' ' + str(self.right) + ' ' + str(self.back) + ' ' + str(self.left))
     def motor(self, ml1, ml2, mr2, mr1, d=0):
         if(not self.available):
             print('Robot is not connected.!!')
@@ -122,15 +129,17 @@ class Robot():
         b.append((d/100)%10 + 48);
         b.append((d/10)%10 + 48);
         b.append((d/1)%10 + 48);
-        # print(str(b))
+        print('[ motor    ] ' +  str(b))
         self.client.send(b)
-        while True:
+        cnt = 0
+        while cnt < 4:
             try:
                 rec = self.client.recv(1)
                 if(rec == 'N'):
                     return True
             except:
                 pass
+            cnt+=1
     def move(self, direction, d = 0):
         # if(self.cnt%3 == 0):
         #     if(self.v < self.speed):
@@ -149,7 +158,7 @@ class Robot():
         elif(direction == 3):
             self.motor(self.v, -self.v/2, -self.v, self.v/2, d)
         elif(direction == 4):
-            self.motor(self.v, -self.v, -self.v, self.v, d)
+            self.motor(self.v, -self.v, -self.v, self.v, d )
             if(d != 0):
                 self.x += d
         elif(direction == 5):
@@ -169,7 +178,7 @@ class Robot():
         elif(direction == 11):
             self.motor(-self.v, self.v/2, self.v, -self.v/2, d)
         elif(direction == 12):
-            self.motor(-self.v, self.v, self.v, -self.v, d)
+            self.motor(-self.v, self.v, self.v, -self.v, d + int(d*0.3))
             if(d != 0):
                 self.x -= d
         elif(direction == 13):
@@ -178,6 +187,10 @@ class Robot():
             self.motor(0, self.v, 0, -self.v, d)
         elif(direction == 15):
             self.motor(self.v/2, self.v, -self.v/2, -self.v, d)
+    def stop2(self):
+        self.motor(0, 0, 0, 0)
+        self.v = 0
+        self.cnt = 0
     def stop(self, arm):
         if(arm.available):
             self.motor(0, 0, 0, 0)
@@ -189,12 +202,93 @@ class Robot():
         self.motor(0, 0, 0, 0)
         self.v = 0
         self.cnt = 0
+    def turn(self, d, arm):
+        arm.update()
+        cmp = arm.angle
+        turnv = 0
+        if(d == 'N'):
+            while(cmp != 0):
+                arm.update()
+                cmp = arm.angle
+                if(cmp > 0 and cmp <=10):
+                    turnv = 30
+                elif(cmp < 0 and cmp >=-10):
+                    turnv = -30
+                elif(cmp > 10 and cmp <=50):
+                    turnv = 50
+                elif(cmp < -10 and cmp >=-50):
+                    turnv = -50
+                elif(cmp > 50):
+                    turnv = 100
+                elif(cmp < -50):
+                    turnv = -100
+                self.motor(turnv,turnv,turnv,turnv)
+        elif(d == 'S'):
+            while(cmp < 179 and cmp >-179):
+                arm.update()
+                cmp = arm.angle
+                if(cmp <= -170):
+                    turnv = 30
+                elif(cmp >= 170):
+                    turnv = -30
+                elif(cmp > -170 and cmp <=-100):
+                    turnv = 50
+                elif(cmp < 170 and cmp >=100):
+                    turnv = -50
+                elif(cmp > -100 and cmp <= 0):
+                    turnv = 100
+                elif(cmp < 100):
+                    turnv = -100
+                self.motor(turnv,turnv,turnv,turnv)
+        elif(d == 'W'):
+            while(cmp != 90):
+                arm.update()
+                cmp = arm.angle
+                print(cmp)
+                if(cmp < 90 and cmp >=80):
+                    turnv = -30
+                elif(cmp > 90 and cmp <= 100):
+                    turnv = 30
+                elif(cmp < 80 and cmp <=0):
+                    turnv = -50
+                elif(cmp > 100 and cmp <=180):
+                    turnv = 50
+                elif(cmp < 0 and cmp >= -90):
+                    turnv = -100
+                elif(cmp < -90):
+                    turnv = 100
+                self.motor(turnv,turnv,turnv,turnv)
+        elif(d == 'E'):
+            while(cmp != -90):
+                arm.update()
+                cmp = arm.angle
+                print(cmp)
+                if(cmp > -90 and cmp <=-80):
+                    turnv = 30
+                elif(cmp < -90 and cmp >= -100):
+                    turnv = -30
+                elif(cmp > -80 and cmp <=0):
+                    turnv = 50
+                elif(cmp < -100 and cmp >=-180):
+                    turnv = -50
+                elif(cmp > 0 and cmp <= 90):
+                    turnv = 100
+                elif(cmp > 90):
+                    turnv = -100
+                self.motor(turnv,turnv,turnv,turnv)
+
+        self.stop2()
     def goto(self, destination, arm):
+        self.turn('N', arm)
         direction = 'F'
         min_distance = 15
         if(destination.y > self.y):
             direction = 'B'
         while(self.x != destination.x or self.y != destination.y):
+            arm.update()
+            time.sleep(0.3)
+            arm.update()
+            time.sleep(0.3)
             self.stop(arm)
             self.update()
             if(direction == 'F'):
@@ -254,3 +348,4 @@ class Robot():
                 else:
                     direction = 'F'
             self.show()
+        self.turn(destination.direction, arm)
