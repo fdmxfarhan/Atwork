@@ -6,14 +6,14 @@ class Robot():
     def __init__(self, s, x, y, display):
         try:
             client, address = s.accept()
-            if(address[0] == '192.168.43.114'):
+            if(address[0] == '192.168.43.75'):
                 print('Robot ' + address[0] + ' Connected.')
                 self.available = True
                 self.client = client
             else:
                 client.close()
                 client, address = s.accept()
-                if(address[0] == '192.168.43.114'):
+                if(address[0] == '192.168.43.75'):
                     print('Robot ' + address[0] + ' Connected.')
                     self.available = True
                     self.client = client
@@ -86,60 +86,45 @@ class Robot():
             return
         b = bytearray()
         b.append('M')
-        if(ml1 >= 0):
-            b.append('+')
-            b.append((ml1/100)%10 + 48);
-            b.append((ml1/10)%10 + 48);
-            b.append((ml1/1)%10 + 48);
-        else:
-            b.append('-')
-            b.append((-ml1/100)%10 + 48);
-            b.append((-ml1/10)%10 + 48);
-            b.append((-ml1/1)%10 + 48);
-        if(ml2 >= 0):
-            b.append('+')
-            b.append((ml2/100)%10 + 48);
-            b.append((ml2/10)%10 + 48);
-            b.append((ml2/1)%10 + 48);
-        else:
-            b.append('-')
-            b.append((-ml2/100)%10 + 48);
-            b.append((-ml2/10)%10 + 48);
-            b.append((-ml2/1)%10 + 48);
-        if(mr2 >= 0):
-            b.append('+')
-            b.append((mr2/100)%10 + 48);
-            b.append((mr2/10)%10 + 48);
-            b.append((mr2/1)%10 + 48);
-        else:
-            b.append('-')
-            b.append((-mr2/100)%10 + 48);
-            b.append((-mr2/10)%10 + 48);
-            b.append((-mr2/1)%10 + 48);
         if(mr1 >= 0):
             b.append('+')
-            b.append((mr1/100)%10 + 48);
-            b.append((mr1/10)%10 + 48);
-            b.append((mr1/1)%10 + 48);
+            b.append(mr1);
         else:
             b.append('-')
-            b.append((-mr1/100)%10 + 48);
-            b.append((-mr1/10)%10 + 48);
-            b.append((-mr1/1)%10 + 48);
-        b.append((d/100)%10 + 48);
-        b.append((d/10)%10 + 48);
-        b.append((d/1)%10 + 48);
-        print('[ motor    ] ' +  str(b))
+            b.append(-mr1);
+        if(mr2 >= 0):
+            b.append('+')
+            b.append(mr2)
+        else:
+            b.append('-')
+            print(mr2)
+            b.append(-mr2)
+        if(ml2 >= 0):
+            b.append('+')
+            b.append(ml2)
+        else:
+            b.append('-')
+            b.append(-ml2)
+        if(ml1 >= 0):
+            b.append('+')
+            b.append(ml1)
+        else:
+            b.append('-')
+            b.append(-ml1)
+        # b.append((d/100)%10 + 48);
+        # b.append((d/10)%10 + 48);
+        # b.append((d/1)%10 + 48);
+
         self.client.send(b)
-        cnt = 0
-        while cnt < 4:
-            try:
-                rec = self.client.recv(1)
-                if(rec == 'N'):
-                    return True
-            except:
-                pass
-            cnt+=1
+        # cnt = 0
+        # while cnt < 4:
+        #     try:
+        #         rec = self.client.recv(1)
+        #         if(rec == 'N'):
+        #             return True
+        #     except:
+        #         pass
+        #     cnt+=1
     def move(self, direction, d = 0):
         # if(self.cnt%3 == 0):
         #     if(self.v < self.speed):
@@ -187,6 +172,21 @@ class Robot():
             self.motor(0, self.v, 0, -self.v, d)
         elif(direction == 15):
             self.motor(self.v/2, self.v, -self.v/2, -self.v, d)
+    def arm(self, number, direction):
+        self.client.send(b'A')
+        b = bytearray()
+        b.append(str(number))
+        if(number == 1):
+            if(direction<0):
+                b.append('-')
+                b.append(-direction)
+            else:
+                b.append('+')
+                b.append(direction)
+            b.append('a')
+        else:
+            b.append(direction)
+        self.client.send(b)
     def stop2(self):
         self.motor(0, 0, 0, 0)
         self.v = 0
@@ -244,7 +244,6 @@ class Robot():
             while(cmp != 90):
                 arm.update()
                 cmp = arm.angle
-                print(cmp)
                 if(cmp < 90 and cmp >=80):
                     turnv = -30
                 elif(cmp > 90 and cmp <= 100):

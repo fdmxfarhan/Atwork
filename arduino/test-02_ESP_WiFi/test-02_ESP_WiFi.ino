@@ -29,10 +29,9 @@ void setup() {
   pinMode(2, OUTPUT);
   digitalWrite(2, 1);
   Serial.begin(115200);
-
+  
   WiFi.mode(WIFI_STA);
   WiFiMulti.addAP(ssid, password);
-
   while (WiFiMulti.run() != WL_CONNECTED) delay(500);
   digitalWrite(2, 0);
   while (!client.connect(host, port)) delay(100);
@@ -40,6 +39,7 @@ void setup() {
 
 
 void loop() {
+  
   while (!client.connected()){
     digitalWrite(2,1);
     delay(100);
@@ -48,33 +48,33 @@ void loop() {
   digitalWrite(2,0);
   if(client.available()){
     rec = client.read();
-    if(rec == 'M'){
-      Serial.print(rec);
-      for(int i = 0; i < 19; i++){
-        rec = client.read();
-        Serial.print(rec);
-      }
-      Serial.print('\n');
-      while(1){
-        if(Serial.available() > 0){
-          if(Serial.read() == 'N') break;
-        }
-      }
-      client.print('N');
-    }
-    else if(rec == 'F'){
-      client.print(srf(12));
-    }
-    else if(rec == 'B'){
-      client.print(srf(13));
-    }
-    else if(rec == 'L'){
-      client.print(srf(14));
-    }
-    else if(rec == 'R'){
-      client.print(srf(16));
-    }
-    
+//    if(rec == 'M'){
+//      Serial.print(rec);
+//      for(int i = 0; i < 19; i++){
+//        rec = client.read();
+//        Serial.print(rec);
+//      }
+//      Serial.print('\n');
+//      while(1){
+//        if(Serial.available() > 0){
+//          if(Serial.read() == 'N') break;
+//        }
+//      }
+//      client.print('N');
+//    }
+//    if(rec == 'F'){
+//      client.print(srf(12));
+//    }
+//    else if(rec == 'B'){
+//      client.print(srf(13));
+//    }
+//    else if(rec == 'L'){
+//      client.print(srf(14));
+//    }
+//    else if(rec == 'R'){
+//      client.print(srf(16));
+//    }
+    Serial.print(rec);
   }
   
 }

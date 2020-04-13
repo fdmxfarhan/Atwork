@@ -60,39 +60,38 @@ v = 0
 d = 'S'
 arm.set()
 while not crashed:
-    v2 = 120
-    v = 100
+    v2 = 100
+    v = 150
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             crashed = True
         if event.type == pygame.KEYDOWN:
             key_pressed = True
             if event.key == pygame.K_UP:
-                d = 'F'
                 robot.motor(v,v,-v,-v)
             if event.key == pygame.K_DOWN:
-                d = 'B'
                 robot.motor(-v,-v,v,v)
             if event.key == pygame.K_LEFT:
-                d = 'L'
                 robot.motor(-v,v,v,-v)
             if event.key == pygame.K_RIGHT:
-                d = 'R'
                 robot.motor(v,-v,-v,v)
+            if event.key == pygame.K_i:
+                robot.arm(2, 'R')
+            if event.key == pygame.K_k:
+                robot.arm(2, 'L')
+            if event.key == pygame.K_o:
+                robot.arm(3, 'R')
+            if event.key == pygame.K_l:
+                robot.arm(3, 'L')
+            if event.key == pygame.K_u:
+                robot.arm(1, -50)
+            if event.key == pygame.K_j:
+                robot.arm(1, 50)
+
             if event.key == pygame.K_q:
                 robot.motor(-v2,-v2,-v2,-v2)
             if event.key == pygame.K_e:
                 robot.motor(v2,v2,v2,v2)
-            if event.key == pygame.K_d:
-                arm.rotate(10)
-            if event.key == pygame.K_a:
-                arm.rotate(-10)
-            if event.key == pygame.K_r:
-                run()
-            if event.key == pygame.K_s:
-                arm.set()
-            if event.key == pygame.K_SPACE:
-                robot.motor(33, 100, 33, -33)
             if event.key == pygame.K_0:
                 robot.goto(desk[0],arm)
             if event.key == pygame.K_1:
@@ -105,11 +104,9 @@ while not crashed:
 
         if event.type == pygame.KEYUP:
             key_pressed = False
-            robot.stop2()
-            robot.update()
-            robot.printDistances()
-            arm.update()
-            arm.printAll()
+            robot.motor(0,0,0,0)
+            robot.arm(2,'S')
+            robot.arm(3,'S')
     display.fill(background_color)
     showDesks()
     robot.show()
