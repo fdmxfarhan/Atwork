@@ -22,7 +22,7 @@ $ sudo apt-get install python-opencv
 $ udo pip install pygame
 ```
 to run the navigation code you can use the command bellow.
-```console
+```shell
 $ cd IRA_atwork/python
 $ python main.py
 ```
