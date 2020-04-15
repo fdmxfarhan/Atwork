@@ -11,7 +11,7 @@
 - Amin Mokadar Daemdoost
 
 to start this project use the command bellow to clone the files and codes.
-```
+```console
 git clone https://github.com/fdmxfarhan/IRA_atwork.git
 ```
 ## Description of project:
