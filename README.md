@@ -4,15 +4,11 @@
 # team leaders:
 - Faramarz Daemi Mojdehi
 - Mohsen Nosrati
+- Ahmad Daemi
 # team members:
 - Farhan Daemi Mojdehi
-- Mina Yahyavi
-- Soodabe Mahasani
-- Mahdieh Kargaran
-- Aida Mobli
-- Mahshad Akbarsharifi
-- Sara Matinfard
-- Sheyda Tarani
+- Alireza Daemi Mojdehi
+- Amin Mokadar Daemdoost
 
 to start this project use the command bellow to clone the files and codes.
 ```
