@@ -14,7 +14,7 @@ to start this project use the command bellow to clone the files and codes.
 ```
 git clone https://github.com/fdmxfarhan/IRA_atwork.git
 ```
-# Description of project:
+## Description of project:
 Codes which written in this project are in two languages, Python and C++. The image proccessing, navigation and simulation parts are written in Python language and the Proccessors (Microcontroller) program is written in C++ using Keil and CubeMX softwares.
 ther are some python libraries that you need to install before running the codes. First of install Open-CV library for image proccessing task and pygame for graphic usage using the command bellow:
 ```
