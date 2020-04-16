@@ -111,9 +111,7 @@ class Robot():
         else:
             b.append('-')
             b.append(-ml1)
-        # b.append((d/100)%10 + 48);
-        # b.append((d/10)%10 + 48);
-        # b.append((d/1)%10 + 48);
+        b.append(d);
 
         self.client.send(b)
         # cnt = 0

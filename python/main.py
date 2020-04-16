@@ -60,7 +60,7 @@ v = 0
 d = 'S'
 arm.set()
 while not crashed:
-    v2 = 100
+    v2 = 130
     v = 150
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -87,7 +87,6 @@ while not crashed:
                 robot.arm(1, -50)
             if event.key == pygame.K_j:
                 robot.arm(1, 50)
-
             if event.key == pygame.K_q:
                 robot.motor(-v2,-v2,-v2,-v2)
             if event.key == pygame.K_e:
