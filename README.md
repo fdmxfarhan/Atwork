@@ -10,7 +10,9 @@
 - Alireza Daemi Mojdehi
 - Amin Mokadar Daemdoost
 
+<div>
 <img align="right" width="70%" src="https://github.com/fdmxfarhan/Atwork/blob/master/document/Untitled-1.jpg">
+</div>
 
 to start this project use the command bellow to clone the files and codes.
 ```console
