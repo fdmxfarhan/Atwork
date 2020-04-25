@@ -23,7 +23,7 @@ Codes which written in this project are in two languages, Python and C++. The im
 ther are some python libraries that you need to install before running the codes. First of install Open-CV library for image proccessing task and pygame for graphic usage using the command bellow:
 ```console
 $ sudo apt-get install python-opencv
-$ udo pip install pygame
+$ sudo pip install pygame
 ```
 to run the navigation code you can use the command bellow.
 ```shell
