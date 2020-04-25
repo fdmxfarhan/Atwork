@@ -7,7 +7,7 @@
 
 # team leaders:
 - Faramarz Daemi Mojdehi
-- Ahmad Daemi Mojdehi- Mohsen Nosrati
+- Ahmad Daemi Mojdehi
 11
 
 # team members:
