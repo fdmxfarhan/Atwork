@@ -62,5 +62,5 @@ class Camera:
         cv2.destroyAllWindows()
 
 #############################################
-obj=Camera(0)
+obj=Camera(2)
 obj.showObj()

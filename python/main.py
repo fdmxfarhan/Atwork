@@ -55,7 +55,7 @@ def showDesks():
     for i in range(len(desk)):
         desk[i].show(display)
 
-robot.speed = 80
+robot.speed = 120
 v = 0
 d = 'S'
 arm.set()
@@ -92,11 +92,11 @@ while not crashed:
             if event.key == pygame.K_e:
                 robot.motor(v2,v2,v2,v2)
             if event.key == pygame.K_0:
-                robot.goto(desk[0],arm)
+                robot.goto(desk[0])
             if event.key == pygame.K_1:
-                robot.goto(desk[1],arm)
+                robot.goto(desk[1])
             if event.key == pygame.K_2:
-                robot.goto(desk[2],arm)
+                robot.goto(desk[2])
             if event.key == pygame.K_z:
                 robot.x = 500;
                 robot.y = 300;
@@ -106,6 +106,8 @@ while not crashed:
             robot.motor(0,0,0,0)
             robot.arm(2,'S')
             robot.arm(3,'S')
+            robot.update()
+            robot.printDistances()
     display.fill(background_color)
     showDesks()
     robot.show()

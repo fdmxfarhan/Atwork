@@ -61,25 +61,25 @@ class Robot():
         if(not self.available):
             return
         try:
-            self.client.send(b'F')
+            self.client.send(b'f')
             time.sleep(0.01)
             self.front = int(self.client.recv(10))
             time.sleep(0.01)
-            self.client.send(b'B')
+            self.client.send(b'b')
             time.sleep(0.01)
             self.back = int(self.client.recv(10))
             time.sleep(0.01)
-            self.client.send(b'L')
+            self.client.send(b'l')
             time.sleep(0.01)
             self.left = int(self.client.recv(10))
             time.sleep(0.01)
-            self.client.send(b'R')
+            self.client.send(b'r')
             time.sleep(0.01)
             self.right = int(self.client.recv(10))
         except:
             pass
     def printDistances(self):
-        print('[ Distance ] ' + str(self.front) + ' ' + str(self.right) + ' ' + str(self.back) + ' ' + str(self.left))
+        print('[ Distance ]  F:' + str(self.front) + ' R:' + str(self.right) + ' B:' + str(self.back) + ' L:' + str(self.left))
     def motor(self, ml1, ml2, mr2, mr1, d=0):
         if(not self.available):
             print('Robot is not connected.!!')
@@ -97,7 +97,6 @@ class Robot():
             b.append(mr2)
         else:
             b.append('-')
-            print(mr2)
             b.append(-mr2)
         if(ml2 >= 0):
             b.append('+')
@@ -171,6 +170,8 @@ class Robot():
         elif(direction == 15):
             self.motor(self.v/2, self.v, -self.v/2, -self.v, d)
     def arm(self, number, direction):
+        if(not self.available):
+            return
         self.client.send(b'A')
         b = bytearray()
         b.append(str(number))
@@ -200,93 +201,13 @@ class Robot():
         self.motor(0, 0, 0, 0)
         self.v = 0
         self.cnt = 0
-    def turn(self, d, arm):
-        arm.update()
-        cmp = arm.angle
-        turnv = 0
-        if(d == 'N'):
-            while(cmp != 0):
-                arm.update()
-                cmp = arm.angle
-                if(cmp > 0 and cmp <=10):
-                    turnv = 30
-                elif(cmp < 0 and cmp >=-10):
-                    turnv = -30
-                elif(cmp > 10 and cmp <=50):
-                    turnv = 50
-                elif(cmp < -10 and cmp >=-50):
-                    turnv = -50
-                elif(cmp > 50):
-                    turnv = 100
-                elif(cmp < -50):
-                    turnv = -100
-                self.motor(turnv,turnv,turnv,turnv)
-        elif(d == 'S'):
-            while(cmp < 179 and cmp >-179):
-                arm.update()
-                cmp = arm.angle
-                if(cmp <= -170):
-                    turnv = 30
-                elif(cmp >= 170):
-                    turnv = -30
-                elif(cmp > -170 and cmp <=-100):
-                    turnv = 50
-                elif(cmp < 170 and cmp >=100):
-                    turnv = -50
-                elif(cmp > -100 and cmp <= 0):
-                    turnv = 100
-                elif(cmp < 100):
-                    turnv = -100
-                self.motor(turnv,turnv,turnv,turnv)
-        elif(d == 'W'):
-            while(cmp != 90):
-                arm.update()
-                cmp = arm.angle
-                if(cmp < 90 and cmp >=80):
-                    turnv = -30
-                elif(cmp > 90 and cmp <= 100):
-                    turnv = 30
-                elif(cmp < 80 and cmp <=0):
-                    turnv = -50
-                elif(cmp > 100 and cmp <=180):
-                    turnv = 50
-                elif(cmp < 0 and cmp >= -90):
-                    turnv = -100
-                elif(cmp < -90):
-                    turnv = 100
-                self.motor(turnv,turnv,turnv,turnv)
-        elif(d == 'E'):
-            while(cmp != -90):
-                arm.update()
-                cmp = arm.angle
-                print(cmp)
-                if(cmp > -90 and cmp <=-80):
-                    turnv = 30
-                elif(cmp < -90 and cmp >= -100):
-                    turnv = -30
-                elif(cmp > -80 and cmp <=0):
-                    turnv = 50
-                elif(cmp < -100 and cmp >=-180):
-                    turnv = -50
-                elif(cmp > 0 and cmp <= 90):
-                    turnv = 100
-                elif(cmp > 90):
-                    turnv = -100
-                self.motor(turnv,turnv,turnv,turnv)
-
+    def goto(self, destination):
         self.stop2()
-    def goto(self, destination, arm):
-        self.turn('N', arm)
         direction = 'F'
         min_distance = 15
         if(destination.y > self.y):
             direction = 'B'
         while(self.x != destination.x or self.y != destination.y):
-            arm.update()
-            time.sleep(0.3)
-            arm.update()
-            time.sleep(0.3)
-            self.stop(arm)
             self.update()
             if(direction == 'F'):
                 if(abs(destination.y - self.y) < 15):
@@ -345,4 +266,4 @@ class Robot():
                 else:
                     direction = 'F'
             self.show()
-        self.turn(destination.direction, arm)
+        self.stop2()

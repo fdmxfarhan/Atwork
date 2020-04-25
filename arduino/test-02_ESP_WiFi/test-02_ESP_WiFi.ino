@@ -62,19 +62,22 @@ void loop() {
 //      }
 //      client.print('N');
 //    }
-//    if(rec == 'F'){
-//      client.print(srf(12));
-//    }
-//    else if(rec == 'B'){
-//      client.print(srf(13));
-//    }
-//    else if(rec == 'L'){
-//      client.print(srf(14));
-//    }
-//    else if(rec == 'R'){
-//      client.print(srf(16));
-//    }
+    if(rec == 'f'){
+      client.print(srf(12));
+    }
+    else if(rec == 'b'){
+      client.print(srf(13));
+    }
+    else if(rec == 'l'){
+      client.print(srf(14));
+    }
+    else if(rec == 'r'){
+      client.print(srf(16));
+    }
     Serial.print(rec);
+  }
+  if(Serial.available() > 0){
+    if(Serial.read() == 'N') client.print('N');
   }
   
 }
